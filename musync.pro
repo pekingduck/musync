@@ -17,4 +17,6 @@ SOURCES += main.cpp\
 
 HEADERS  += musyncwidget.h
 
-FORMS    += musyncwidget.ui
+FORMS    += musyncwidget.ui \
+    progressdialog.ui \
+    framelessdialog.ui

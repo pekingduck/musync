@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>710</width>
-    <height>280</height>
+    <width>411</width>
+    <height>218</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -87,33 +87,14 @@
     <item row="0" column="4">
      <widget class="QPushButton" name="initButton">
       <property name="enabled">
-       <bool>false</bool>
+       <bool>true</bool>
       </property>
       <property name="text">
-       <string>Init</string>
+       <string>Init..</string>
       </property>
      </widget>
     </item>
    </layout>
-  </widget>
-  <widget class="QProgressBar" name="progressBar">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>260</y>
-     <width>691</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="maximum">
-    <number>0</number>
-   </property>
-   <property name="value">
-    <number>-1</number>
-   </property>
-   <property name="invertedAppearance">
-    <bool>false</bool>
-   </property>
   </widget>
   <widget class="QPushButton" name="nextButton">
    <property name="enabled">
@@ -121,7 +102,7 @@
    </property>
    <property name="geometry">
     <rect>
-     <x>270</x>
+     <x>250</x>
      <y>180</y>
      <width>101</width>
      <height>32</height>
@@ -129,25 +110,6 @@
    </property>
    <property name="text">
     <string>Next</string>
-   </property>
-  </widget>
-  <widget class="QPlainTextEdit" name="logEdit">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>220</y>
-     <width>691</width>
-     <height>41</height>
-    </rect>
-   </property>
-   <property name="font">
-    <font>
-     <family>Menlo</family>
-     <pointsize>13</pointsize>
-    </font>
-   </property>
-   <property name="readOnly">
-    <bool>true</bool>
    </property>
   </widget>
   <widget class="QPushButton" name="cancelButton">
