@@ -1,4 +1,4 @@
-#!/usr/local/bin/python3.4 -u
+#!/Library/Frameworks/Python.framework/Versions/3.4/bin/python3 -u
 
 # To be able to launch the script from the DOCK, you'll need to set the
 # environment variable "PYTHONPATH" by launchctl
@@ -8,12 +8,27 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 import os, sys
-import mainwidget
-import appobj
+
 
 if __name__ == "__main__":
+  # Find out the "Resources" directory of the bundle
+  bundle_dir = __file__
+  
+  # First test: for relative paths (dirname('a') would be '')
+  # Second test: for absolute paths (dirname('/') would be '/')
+  while bundle_dir and bundle_dir != os.sep:
+    bundle_dir = os.path.dirname(bundle_dir)
+    if bundle_dir.endswith(".app"):
+      break
+  else:
+    raise RuntimeError("Not an app bundle")
+
+  sys.path.append(os.path.join(bundle_dir, "Contents", "Resources", "python"))
+  import mainwidget
+  import appobj
+
   app = QtWidgets.QApplication(sys.argv)
-  mctrl = appobj.MusyncController()
+  mctrl = appobj.MusyncController(bundle_dir)
   gui = mainwidget.MusyncGUI(mctrl)
   gui.show()
   sys.exit(app.exec_())

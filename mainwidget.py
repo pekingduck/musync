@@ -3,6 +3,7 @@ import os, sys
 import musyncwidget
 import progressdialog
 import framelessdialog
+import widgets.treeselector
 import time
 
 class FramelessDialog(QtWidgets.QDialog):
@@ -16,7 +17,7 @@ class FramelessDialog(QtWidgets.QDialog):
 class ProgressDialog(QtWidgets.QDialog):
   def __init__(self, parent, num_files):
     super(ProgressDialog, self).__init__(parent,
-                                               QtCore.Qt.FramelessWindowHint)
+                                         QtCore.Qt.FramelessWindowHint)
     self.num_files = num_files
     self.ui = progressdialog.Ui_progressDiag()
     self.ui.setupUi(self)
@@ -80,11 +81,14 @@ class MusyncGUI(QtWidgets.QWidget):
   def delete_device(self):
     dev_name = self.ui.deviceCB.currentText()
     dev_idx = self.ui.deviceCB.currentIndex()
-    if self.sdb.has_device(dev_name):
-      self.sdb.del_device(dev_name)
-      self.sdb.save()
+    #if self.sdb.has_device(dev_name):
+    #  self.sdb.del_device(dev_name)
+    #  self.sdb.save()
+    self.app.delete_device(self.ui.libraryCB.currentText(), dev_name)
     self.ui.deviceCB.removeItem(dev_idx)
-
+    self.ui.locationEdit.setText("")
+    self.device_selected(self.ui.deviceCB.currentText())
+    
   def init_clicked(self):
     lib_name = self.ui.libraryCB.currentText()
     diag = FramelessDialog(self, "Initializing Library...")
@@ -150,6 +154,11 @@ class MusyncGUI(QtWidgets.QWidget):
     QtWidgets.QApplication.processEvents(
       QtCore.QEventLoop.ExcludeUserInputEvents) 
 
+  def selector_format_func(self, total_str, count_str):
+    total = int(total_str)
+    count = int(count_str)
+    return "{:.2f}G / {} playlist(s) selected".format(total / 1024 ** 3, count)
+  
   def select_and_sync(self):
     self.enable(False)   # grey out some controls
 
@@ -157,13 +166,16 @@ class MusyncGUI(QtWidgets.QWidget):
     device_name = self.ui.deviceCB.currentText()
     pl_type = self.ui.playlistCB.currentText()
     lib_name = self.ui.libraryCB.currentText()
-    
+    diag = widgets.treeselector.TreeSelectorDialog(parent = self,
+                                                   format_function = self.selector_format_func)
+
     # launch playlist selector
     (num_deleted, num_files) = self.app.select(lib_name,
                                                device_name,
                                                dest,
                                                pl_type,
-                                               self.process_events)
+                                               self.process_events,
+                                               diag)
 
     if num_deleted > 0:
       diag = FramelessDialog(self, "{} playlist(s) deleted".format(num_deleted))
