@@ -1,4 +1,4 @@
-#!/Library/Frameworks/Python.framework/Versions/3.4/bin/python3 -u
+#!/Users/gordonlo/bin/python3 -u
 
 # To be able to launch the script from the DOCK, you'll need to set the
 # environment variable "PYTHONPATH" by launchctl
@@ -13,7 +13,7 @@ import os, sys
 if __name__ == "__main__":
   # Find out the "Resources" directory of the bundle
   bundle_dir = __file__
-  
+
   # First test: for relative paths (dirname('a') would be '')
   # Second test: for absolute paths (dirname('/') would be '/')
   while bundle_dir and bundle_dir != os.sep:

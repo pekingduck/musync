@@ -1,0 +1,5 @@
+__pycache__/
+MuSync.app/
+progressdialog.py
+framelessdialog.py
+musyncwidget.py
