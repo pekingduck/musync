@@ -17,5 +17,6 @@ install:
 	cp -p MuSync.icns $(APP)/Contents/Resources
 
 clean:
-	rm $(widgets)
+	rm -f $(widgets)
 	rm -rf $(APP)
+	rm -rf __pycache__/

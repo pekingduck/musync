@@ -1,4 +1,4 @@
-#!/Users/gordonlo/bin/python3 -u
+#!/Users/gordonlo/Python/bin/python -u
 
 # To be able to launch the script from the DOCK, you'll need to set the
 # environment variable "PYTHONPATH" by launchctl
