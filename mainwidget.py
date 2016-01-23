@@ -77,7 +77,13 @@ class MusyncGUI(QtWidgets.QWidget):
     if text:
       status = True
     self.ui.deleteButton.setEnabled(status)
-
+    # 2015-11-24
+    # When device is not in the DB, enable Playlist type selection
+    lib = self.ui.libraryCB.currentText()
+    name = self.ui.deviceCB.currentText()
+    if name not in self.data[lib]:
+      self.ui.playlistCB.setEnabled(True)
+    
   def delete_device(self):
     dev_name = self.ui.deviceCB.currentText()
     dev_idx = self.ui.deviceCB.currentIndex()

@@ -7,7 +7,7 @@
 # Why <LSEnvironment> in Info.plist doesn't work??
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-import os, sys
+import os, sys, logging
 
 
 if __name__ == "__main__":
@@ -26,6 +26,13 @@ if __name__ == "__main__":
   sys.path.append(os.path.join(bundle_dir, "Contents", "Resources", "python"))
   import mainwidget
   import appobj
+
+  # 2016-1-22
+  # setting up logging
+  logging.basicConfig(filename=os.path.expanduser("~/Logs/musync.log"),
+                      level=logging.DEBUG,
+                      format='[%(levelname)s] <%(asctime)s> %(message)s')
+  logging.debug("############### MuSync.app started #############")
 
   app = QtWidgets.QApplication(sys.argv)
   mctrl = appobj.MusyncController(bundle_dir)

@@ -1,5 +1,5 @@
 from PyQt5 import QtCore #, QtGui, QtWidgets
-import os, sys
+import os, sys, logging
 import configparser
 import music.device
 import music.flac
@@ -14,18 +14,19 @@ expusr = os.path.expanduser
 
 class MusyncController(QtCore.QObject):
   class_map = { "iTunes" : music.itunes.Library, "FLAC" : music.flac.Library }
-  
+
   def __init__(self, bundle_dir):
     super(MusyncController, self).__init__(None)
     self.init()
     self.bundle_dir = bundle_dir
-    
+
   def init(self):
     self.config = configparser.ConfigParser()
     self.config.read(expusr("~/.music.cfg"))
 
   def init_db(self, lib_name):
     if lib_name in self.config:
+      logging.debug("MusyncController::init_db")
       music.itunes.Library.genesis(lib_name, self.config)
 
   # get library and device data
@@ -40,7 +41,7 @@ class MusyncController(QtCore.QObject):
         data[lib][dev.name] = { 'loc' : dev.location,
                                 'type' : dev.pl_type }
     return data
-  
+
   def select(self, lib_name, device_name, dest, pl_type, event_cb, diag):
     db_file = self.db_file(lib_name)
     lib = self.class_map[self.config[lib_name]["TYPE"]](db_file)
@@ -56,7 +57,7 @@ class MusyncController(QtCore.QObject):
       #selector.add_leaf(pl.path, self.device.get(pl.path), pl.size)
       model.mkdirp(pl.path_list, int(self.device.get(pl.path)), pl.size)
       self.handler()
-      
+
     # Second Lib
     if 'SecondLib' in self.config[lib_name] and 'SecondLibPlaylistRegex' in self.config[lib_name]:
       lib_name2 = expusr(self.config[lib_name]["SecondLib"])
@@ -64,18 +65,18 @@ class MusyncController(QtCore.QObject):
       db_file2 = self.db_file(lib_name2)
       lib2 = self.class_map[self.config[lib_name2]["TYPE"]](db_file2)
       rx = re.compile(lib2_regex)
-      
+
       for pl in lib2.playlists():
         if re.search(rx, pl.path):
           model.mkdirp(pl.path_list, int(self.device.get(pl.path)), pl.size)
           #selector.add_leaf(pl.path, self.device.get(pl.path), pl.size)
         self.handler()
-        
+
     diag.setModel(model)
     model.preprocess()
     if not diag.exec(): # "cancel" pressed
       return (0, 0)
-    
+
     # Mark "D" for playlists not present in the selection
     to_be_deleted = {path:s for path,s in self.device.playlists()}
     for path_list, status, _, _ in model.checked():
@@ -100,7 +101,7 @@ class MusyncController(QtCore.QObject):
   def sync(self):
     for progress, file_name in self.device.sync():
       yield (progress, file_name)
-    
+
   def staging_dir(self, lib_name):
     return expusr(self.config[lib_name]["StagingDir"])
 
