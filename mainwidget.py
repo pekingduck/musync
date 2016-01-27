@@ -13,7 +13,7 @@ class FramelessDialog(QtWidgets.QDialog):
     self.ui = framelessdialog.Ui_framelessDialog()
     self.ui.setupUi(self)
     self.ui.label.setText(msg)
-    
+
 class ProgressDialog(QtWidgets.QDialog):
   def __init__(self, parent, num_files):
     super(ProgressDialog, self).__init__(parent,
@@ -27,7 +27,7 @@ class ProgressDialog(QtWidgets.QDialog):
     self.ui.fileNumLab.setText("")
     self.ui.fileLab.setText("")
     self.ui.buttonBox.setHidden(True)
-    
+
   def update_progress(self, percentage, file_name, file_num):
     self.ui.fileNumLab.setText("Copying {} of {}".format(file_num,
                                                          self.num_files))
@@ -38,7 +38,7 @@ class ProgressDialog(QtWidgets.QDialog):
     self.ui.buttonBox.setHidden(False)
     self.ui.fileLab.setAlignment(QtCore.Qt.AlignHCenter)
     super().exec()
-    
+
 class MusyncGUI(QtWidgets.QWidget):
   next_step = QtCore.pyqtSignal(str, str, str)
   device_selected = QtCore.pyqtSignal(str)
@@ -47,7 +47,7 @@ class MusyncGUI(QtWidgets.QWidget):
     super(MusyncGUI, self).__init__(None)
     self.app = app_obj
     self.data = app_obj.metadata()
-    
+
     self.ui = musyncwidget.Ui_MusyncWidget()
     self.ui.setupUi(self)
 
@@ -55,7 +55,7 @@ class MusyncGUI(QtWidgets.QWidget):
       self.ui: 1 }
     self.ui.libraryCB.addItems(sorted(self.data.keys()))
     self.ui.libraryCB.setFocus(True)
-    
+
     self.ui.libraryCB.activated[str].connect(self.library_selected)
     self.ui.deviceCB.activated[str].connect(self.device_selected)
     self.ui.locationEdit.textChanged.connect(self.location_edited)
@@ -71,7 +71,7 @@ class MusyncGUI(QtWidgets.QWidget):
     if self.ui.libraryCB.count() > 0:
       self.ui.libraryCB.setCurrentIndex(0)
       self.library_selected(self.ui.libraryCB.currentText())
-      
+
   def device_check(self, text):
     status = False
     if text:
@@ -83,7 +83,7 @@ class MusyncGUI(QtWidgets.QWidget):
     name = self.ui.deviceCB.currentText()
     if name not in self.data[lib]:
       self.ui.playlistCB.setEnabled(True)
-    
+
   def delete_device(self):
     dev_name = self.ui.deviceCB.currentText()
     dev_idx = self.ui.deviceCB.currentIndex()
@@ -94,16 +94,16 @@ class MusyncGUI(QtWidgets.QWidget):
     self.ui.deviceCB.removeItem(dev_idx)
     self.ui.locationEdit.setText("")
     self.device_selected(self.ui.deviceCB.currentText())
-    
+
   def init_clicked(self):
     lib_name = self.ui.libraryCB.currentText()
-    diag = FramelessDialog(self, "Initializing Library...")
+    diag = FramelessDialog(self, "Importing Library...")
     diag.show()
     self.app.init_db(lib_name)
     diag.done(0)
 
   def choose_clicked(self):
-    loc = QtWidgets.QFileDialog.getExistingDirectory(self, 
+    loc = QtWidgets.QFileDialog.getExistingDirectory(self,
                                                      "Open Device", "/Volumes")
     if loc:
       self.ui.locationEdit.setText(loc)
@@ -116,9 +116,9 @@ class MusyncGUI(QtWidgets.QWidget):
     #print("validate_input")
     is_valid = False
     loc = os.path.expanduser(self.ui.locationEdit.text())
-    if (loc and 
-        os.access(loc, os.W_OK) and 
-        #self.ui.libraryCB.currentIndex() and 
+    if (loc and
+        os.access(loc, os.W_OK) and
+        #self.ui.libraryCB.currentIndex() and
         len(self.ui.deviceCB.currentText())):
       is_valid = True
     self.ui.nextButton.setEnabled(is_valid)
@@ -153,18 +153,18 @@ class MusyncGUI(QtWidgets.QWidget):
       self.ui.locationEdit.setText("")
       self.ui.playlistCB.setEnabled(True)
     self.validate_input()
-    
+
   # let QT redraw widgets and processes other things (except user inputs)
   # during extended operations (e.g. exec()ing an external process)
   def process_events(self):
     QtWidgets.QApplication.processEvents(
-      QtCore.QEventLoop.ExcludeUserInputEvents) 
+      QtCore.QEventLoop.ExcludeUserInputEvents)
 
   def selector_format_func(self, total_str, count_str):
     total = int(total_str)
     count = int(count_str)
     return "{:.2f}G / {} playlist(s) selected".format(total / 1024 ** 3, count)
-  
+
   def select_and_sync(self):
     self.enable(False)   # grey out some controls
 
@@ -202,5 +202,5 @@ class MusyncGUI(QtWidgets.QWidget):
           file_name = "Finished!"
         diag.update_progress(progress, file_name, file_num)
       diag.exec() # "OK" unhidden here, wait for user to click
-      
+
     self.close() # the last widget closes and the app quits here
